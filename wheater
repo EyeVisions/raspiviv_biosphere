@@ -1,0 +1,39 @@
+<?php
+// a way to load weather into database and display on your site
+
+ $url = "http://api.openweathermap.org/data/2.5/weather?q=Ambanja&lang=nl&units=metric&APPID=yourcode";
+
+
+ $contents = file_get_contents($url);
+ $clima=json_decode($contents);
+
+ $temp=$clima->main->temp;
+ $hum=$clima->main->humidity;
+ $rain=$clima->rain->rain3h;
+ $sunrise=$clima->sys->sunrise;
+ $sunset=$clima->sys->sunset;
+ $clouds=$clima->clouds->all;
+ $icon=$clima->weather[0]->icon.".png";
+
+ //how get today date time PHP :P
+ $today = date("F j, Y, g:i a");
+ $cityname = $clima->name;
+
+ echo "Madagascar: - " .$today . "<br>";
+ echo "Tempratuur: " . $temp ."&deg;C<br>";
+ echo "Humidity: " . $hum ."%<br>";
+ echo "Regen laatste 3h:" .$rain ."mL<br>";
+ echo "Sunrise: ";
+ echo date('H:i:s', $sunrise) ."<br>";
+ echo "Sunset: ";
+ echo date('H:i:s', $sunset) ."<br>";
+ echo "bewolking: " .$clouds ."%<br>";
+ echo "<img src='http://openweathermap.org/img/w/" . $icon ."'/ <br>";
+
+$db = mysql_connect("localhost","datalogger","datalogger") or die("DB Connect error");
+mysql_select_db("datalogger");
+$q = "INSERT INTO datalogger VALUES (now(), 0, '$temp', '$hum',0)";
+mysql_query($q);
+mysql_close($db);
+
+ ?>
